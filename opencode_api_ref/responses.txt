@@ -1,0 +1,83 @@
+# OpenCode API 返回值参考（脱敏、简版）
+# 基于 opencode.md 与 curl 实测整理，仅描述响应类型与结构，无真实 id/path/用户信息。
+
+## Global
+GET  /global/health         { healthy: bool, version: string }
+GET  /global/event          SSE 流
+
+## Project / Path / VCS
+GET  /project               Project[]（id, slug, directory, title 等）
+GET  /project/current       Project
+GET  /path                  Path（cwd, root 等）
+GET  /vcs                   VcsInfo
+
+## Instance / Config
+POST /instance/dispose      boolean
+GET  /config                Config（plugin, provider, agent, keybinds 等）
+PATCH /config               Config
+GET  /config/providers      { providers: Provider[], default: { [key]: string } }
+
+## Provider
+GET  /provider              { all: Provider[], default: {...}, connected: string[] }
+GET  /provider/auth         { [providerID]: ProviderAuthMethod[] }
+
+## Session（:id 为 session_id）
+GET  /session               Session[]（id, slug, title, directory, time, summary? 等）
+POST /session               Session（body: { parentID?, title? }）
+GET  /session/status        { [sessionID]: SessionStatus }
+GET  /session/:id           Session
+DELETE /session/:id         boolean
+PATCH /session/:id          Session（body: { title? }）
+GET  /session/:id/children  Session[]
+GET  /session/:id/todo      Todo[]
+POST /session/:id/init      boolean（body: messageID, providerID, modelID）
+POST /session/:id/fork      Session（body: { messageID? }）
+POST /session/:id/abort     boolean
+POST /session/:id/share    Session
+DELETE /session/:id/share   Session
+GET  /session/:id/diff      FileDiff[]（query: messageID?）
+POST /session/:id/summarize boolean（body: providerID, modelID）
+POST /session/:id/revert   boolean（body: messageID, partID?）
+POST /session/:id/unrevert  boolean
+
+## Message（:id=session_id, :messageID=message_id）
+GET  /session/:id/message   [{ info: Message, parts: Part[] }]（query: limit?）
+POST /session/:id/message   { info: Message, parts: Part[] }（body: parts 等）
+GET  /session/:id/message/:messageID  { info: Message, parts: Part[] }
+POST /session/:id/prompt_async  204
+POST /session/:id/command   { info: Message, parts: Part[] }（body: command, arguments）
+POST /session/:id/shell    { info: Message, parts: Part[] }（body: agent, model?, command）
+
+## Command / File / Find
+GET  /command               Command[]（name, description, template 等）
+GET  /find                  match[]（query: pattern，path, lines, line_number 等）
+GET  /find/file             string[]（query: query，路径列表）
+GET  /find/symbol           Symbol[]（query: query）
+GET  /file                  FileNode[]（query: path）
+GET  /file/content          FileContent（query: path）
+GET  /file/status           File[]
+
+## Experimental / LSP / MCP / Agent
+GET  /experimental/tool/ids ToolIDs
+GET  /experimental/tool     ToolList（query: provider, model）
+GET  /lsp                   LSPStatus[]
+GET  /formatter             FormatterStatus[]
+GET  /mcp                   { [name]: MCPStatus }
+POST /mcp                   MCP 状态（body: name, config）
+GET  /agent                 Agent[]（name, description, permission, mode 等）
+
+## Log / TUI / Auth / Event
+POST /log                   boolean（body: service, level, message, extra?）
+POST /tui/append-prompt     boolean
+POST /tui/open-help         boolean
+POST /tui/open-sessions     boolean
+POST /tui/open-themes       boolean
+POST /tui/open-models       boolean
+POST /tui/submit-prompt     boolean
+POST /tui/clear-prompt      boolean
+POST /tui/execute-command   boolean（body: command）
+POST /tui/show-toast        boolean（body: title?, message, variant?）
+GET  /tui/control/next      控制请求对象（可能阻塞）
+POST /tui/control/response  boolean（body）
+PUT  /auth/:id              boolean
+GET  /event                 SSE 流

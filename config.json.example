@@ -1,0 +1,4 @@
+{
+  "telegram_token": "你的 Bot Token",
+  "allowed_chat_ids": [123456789]
+}
