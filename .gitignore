@@ -2,10 +2,5 @@
 __pycache__/
 *.pyc
 *.log
-opencode.log
-bot.log
-config.json
-# API 抓取结果（可能含本地路径等）
-opencode_api_ref/*.json
-opencode_api_ref/*.curl.txt
-opencode_api_ref/index.txt
+*.json
+matrix_store/

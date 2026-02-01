@@ -1,4 +1,9 @@
 {
   "telegram_token": "你的 Bot Token",
-  "allowed_chat_ids": [123456789]
+  "allowed_chat_ids": [123456789],
+  "matrix_homeserver": "https://matrix.example.com",
+  "matrix_user_id": "@bot:example.com",
+  "matrix_password": "仅首次登录使用，成功后会自动删除",
+  "matrix_password_for_uia": "可选，用于登出其他设备时的交互认证；不删除",
+  "allowed_user_ids": []
 }
